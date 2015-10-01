@@ -24,6 +24,31 @@ public class Connect4Daemon {
 		}
 	}
 	
+	public synchronized Game waitForGame(Connect4Player p) {
+		Game retval = null;
+		if (playerWaiting == null) {
+		playerWaiting = p;
+		thisGame = null;	// just in case!
+		p.send("PLSWAIT");
+		while (playerWaiting != null) {
+		try {
+		wait();
+		}
+		catch (InterruptedException e) {
+		System.out.println("Error:" + e);
+		}
+		}
+		return thisGame;
+		}
+		else {
+		thisGame = new Game(playerWaiting, p);
+		retval = thisGame;
+		playerWaiting = null;
+		notify();
+		return retval;
+		}
+		}
+	
 	public void start() {
 		// TODO Auto-generated method stub
 		

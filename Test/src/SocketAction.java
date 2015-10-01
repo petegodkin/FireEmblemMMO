@@ -10,7 +10,7 @@ import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Test {
+public class SocketAction {
 	private DataInputStream inStream = null;
 	protected PrintStream outStream = null;
 	private Socket socket = null;

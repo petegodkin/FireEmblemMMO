@@ -143,22 +143,6 @@ public class Overworld implements Runnable{
       long deltaLoop;
       Scanner input = new Scanner("Pause.txt");
       
-      Socket clientSocket;
-  	   while (true) {
-  	     if (port == null) {
-  	        System.out.println("Sorry, the port disappeared.");
-  	        System.exit(1);
-  	     }
-  	     try {
-  	        clientSocket = port.accept();
-  	        new Connect4Player(this, clientSocket).start();
-  	     }
-  	     catch (IOException e) {
-  	        System.out.println("Couldn’t connect player:" + e);
-  	        System.exit(1);
-  	     }
-  	  }
-      
       while(running){
          beginLoopTime = System.nanoTime();
          
@@ -244,19 +228,6 @@ public class Overworld implements Runnable{
       g.fillRect(400, 800, 200, 100);
 	  g.setColor(Color.white);
       g.fillRect(405, 805, 190, 90);
-   }
-   
-   public SocketAction(Socket sock) {
-	   super("SocketAction");
-	   try {
-	      inStream = new DataInputStream(new BufferedInputStream(sock.getInputStream(), 1024));
-	      outStream = new PrintStream(new BufferedOutputStream(sock.getOutputStream(), 1024), true);
-	      socket = sock;
-	   }
-	   catch (IOException e) {
-	      System.out.println("Couldn’t initialize SocketAction:" + e);
-	      System.exit(1);
-	   }
    }
    
    public void send(String s) {
