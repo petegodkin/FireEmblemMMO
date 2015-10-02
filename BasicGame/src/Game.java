@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
@@ -26,7 +25,6 @@ public class Game implements Runnable{
    int mapSizex = 0;
    int mapSizey = 0;
    
-   //int player[] = {0, 0};
    int movestart[] = {0, 0};
    int X = 0;
    int Y = 0;
@@ -34,15 +32,17 @@ public class Game implements Runnable{
    int y = 0;
    boolean esc = false;
    String action = "";
-   String turn = "player";
    Random rand = new Random();
    boolean click = false;
    boolean execute = false;
    int timer = 0;
    boolean gameover = false;
+   boolean overworld = true;
    
    JFrame frame;
    Canvas canvas;
+   JFrame frameoverworld;
+   Canvas canvasoverworld;
    BufferStrategy bufferStrategy;
    
    private class Menu{
@@ -54,6 +54,15 @@ public class Game implements Runnable{
 	     this.i = i;
 	  }
    }
+   
+   private class Turn {
+	   String turn;
+	   Turn next;
+	   Turn(String turn){
+		   this.turn = turn;
+	   }
+   }
+   Turn turn = null;
    
    Menu menu = null;
    Menu combatmenu = null;
@@ -137,7 +146,7 @@ public class Game implements Runnable{
 		int damage;
 		double accuracy;
 		int movespeed;
-		boolean action;
+		//boolean action;
 		int aisearchrange;
 		AIUnit next;
 		AIUnit(int x, int y, int HP, int damage, double accuracy, int movespeed, int aisearchrange){
@@ -149,157 +158,45 @@ public class Game implements Runnable{
 			this.accuracy = accuracy;
 			this.movespeed = movespeed;
 			this.aisearchrange = aisearchrange;
-			action = true;
+			//action = true;
 		}
 	}
 	
 
 	AIUnit enemy = null;
 	AIUnit aiselected = null;
-	
-   public Game(String a){
-      frame = new JFrame("Basic Game");
-      combatmenu = new Menu("HP", 0);
-      combatmenu.next = new Menu("Mt", 1);
-      combatmenu.next.next = new Menu("Hit", 2);
-      File file = new File(a);
-  	  Scanner input = null;
-  	  String line = null;
-      try {
-    	  input = new Scanner(file);
-	  } catch (FileNotFoundException e) {
-		  e.printStackTrace();
-	  }
-  	  int linecount = 0;
-  	  while( input.hasNextLine() ){
-   		  line = input.nextLine();
-   		  linecount++;
-   	  }
-      try {
-    	  input = new Scanner(file);
-	  } catch (FileNotFoundException e) {
-		  e.printStackTrace();
-	  }
-  	  String[] part;
-  	  for(int i = 0; i < linecount; i++){
-  		  part = new String[3];
-  	 	  line = input.nextLine();
-  	 	  part = line.split(" ");
-  	 	  for(int j = 0; j < part.length; j++){
-  	 		  if(i == 0){
-  	 			  if(j == 0){
-  	 				  mapSizex = Integer.parseInt(part[j]);
-  	 			  }else{
-  	 				  mapSizey = Integer.parseInt(part[j]);
-  	 			  }
-  	 		  }else{
-  	 			  if(part[j].compareTo("x") == 0){
-                      if(obstacle == null){
-                    	  obstacle = new Obstacle(j, i-1);
-                      }else{
-                    	  Obstacle read = obstacle;
-                          while(read.next != null){
-                        	  read = read.next;
-                          }
-                          read.next = new Obstacle(j, i-1);
-                      }
-  	 			  }else if(part[j].compareTo("E") == 0){
-  	 				  if(enemy == null){
-  	 					  enemy = new AIUnit(j, i-1, 10, 5, .60, 4, 10);
-  	 				  }else{
-  	 					  AIUnit read = enemy;
-  	 					  while(read.next != null){
-  	 						  read = read.next;
-  	 					  }
-  	 					  read.next = new AIUnit(j, i-1, 10, 5, .60, 4, 10);
-  	 				  }
-  	 			  }else if(part[j].compareTo("P") == 0){
-  	 				  if(player == null){
-  	 					player = new Unit(j, i-1, 20, 8, .8, 5);
-  	 				  }else{
-  	 					  Unit read = player;
-  	 					  while(read.next != null){
-  	 						  read = read.next;
-  	 					  }
-  	 					  read.next = new Unit(j, i-1, 20, 8, .8, 5);
-  	 				  }
-  	 			  }
-  	 		  }
-  	 	  }
-  	  }
-      JPanel panel = (JPanel) frame.getContentPane();
-      panel.setPreferredSize(new Dimension(mapSizex*gridSize, mapSizey*gridSize));
-      panel.setLayout(null);
-      
-      canvas = new Canvas();
-      canvas.setBounds(0, 0, mapSizex*gridSize+1, mapSizey*gridSize+1);
-      canvas.setIgnoreRepaint(true);
-      
-      panel.add(canvas);
-      
-      canvas.addMouseListener(new MouseControl());
-      canvas.addMouseMotionListener(new MyClass());
-      canvas.addKeyListener(new KeyControl());
-      
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.pack();
-      frame.setResizable(false);
-      frame.setVisible(true);
-      
-      canvas.createBufferStrategy(2);
-      bufferStrategy = canvas.getBufferStrategy();
-      
-      canvas.requestFocus();
-   }
-   
-        
-   private class MouseControl extends MouseAdapter{
-      public void mousePressed(MouseEvent event){
-    	  if(click == false && SwingUtilities.isLeftMouseButton(event)){
-    		  X = event.getX();
-    		  Y = event.getY();
-    	      click = true;
-    	  }
-    	  if(SwingUtilities.isRightMouseButton(event)){
-    		  esc = true;
-    	  }
 
-      }
-      public void mouseReleased(MouseEvent event){
-    	  click = false;
-    	  execute = false;
-      }
-   }
-   
-   public class MyClass implements MouseMotionListener {
-
-	    public void mouseMoved(MouseEvent e) {
-	       x = e.getX();
-	       y = e.getY();
-	    }
-
-	    public void mouseDragged(MouseEvent e) {
-	       //do something
-	    }
-	}
-   public class KeyControl extends JFrame implements KeyListener {
-	    public void keyPressed(KeyEvent e) {
-	       if (e.getKeyCode() == KeyEvent.VK_ESCAPE && esc == false) {
-	          esc = true;
-	       }
-	    }
-
-		@Override
-		public void keyReleased(KeyEvent arg0) {
-
-		}
-
-		@Override
-		public void keyTyped(KeyEvent arg0) {
-
-		}
-   }
-
+	   public Game(){
+		      frameoverworld = new JFrame("Overworld");
+		      
+		      combatmenu = new Menu("HP", 0);
+		      combatmenu.next = new Menu("Mt", 1);
+		      combatmenu.next.next = new Menu("Hit", 2);
+		  	  
+		      JPanel panel = (JPanel) frameoverworld.getContentPane();
+		      panel.setPreferredSize(new Dimension(1000, 1000));
+		      panel.setLayout(null);
+		      
+		      canvasoverworld = new Canvas();
+		      canvasoverworld.setBounds(0, 0, 1020, 1020);
+		      canvasoverworld.setIgnoreRepaint(true);
+		      
+		      panel.add(canvasoverworld);
+		      
+		      canvasoverworld.addMouseListener(new MouseControl());
+		      canvasoverworld.addMouseMotionListener(new MyClass());
+		      canvasoverworld.addKeyListener(new KeyControl());
+		      
+		      frameoverworld.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		      frameoverworld.pack();
+		      frameoverworld.setResizable(false);
+		      frameoverworld.setVisible(true);
+		      
+		      canvasoverworld.createBufferStrategy(2);
+		      bufferStrategy = canvasoverworld.getBufferStrategy();
+		      
+		      canvasoverworld.requestFocus();
+		   }
    
    long desiredFPS = 60;
     long desiredDeltaLoop = (1000*1000*1000)/desiredFPS;
@@ -321,8 +218,13 @@ public class Game implements Runnable{
          
          lastUpdateTime = currentUpdateTime;
          currentUpdateTime = System.nanoTime();
-         update((int) ((currentUpdateTime - lastUpdateTime)/(1000*1000)));
-         render();
+         if(overworld == true){
+        	 updateoverworld((int) ((currentUpdateTime - lastUpdateTime)/(1000*1000)));
+        	 renderoverworld();
+         }else{
+        	 update((int) ((currentUpdateTime - lastUpdateTime)/(1000*1000)));
+        	 render();
+         }
          endLoopTime = System.nanoTime();
          deltaLoop = endLoopTime - beginLoopTime;
            
@@ -338,10 +240,25 @@ public class Game implements Runnable{
            if(gameover == true){
          	  frame.setVisible(false); //you can't see me!
          	  frame.dispose(); //Destroy the JFrame object
-         	  return;
+         	  turn = null;
+         	  frame = null;
+         	  enemy = null;
+         	  player = null;
+         	  obstacle = null;
+         	  gameover = false;
+         	  frameoverworld.setVisible(true);
+         	  overworld = true;
            }
       }
    }
+   
+   private void renderoverworld() {
+	      Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
+	      g.clearRect(0, 0, 1000, 1000);
+	      renderoverworld(g);
+	      g.dispose();
+	      bufferStrategy.show();
+	   }
    
    private void render() {
       Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
@@ -351,14 +268,24 @@ public class Game implements Runnable{
       bufferStrategy.show();
    }
    
-   //TESTING
-   //private double x = 0;
+   protected void updateoverworld(int deltaTime){
+	      if(execute == false && click == true){
+	    			 if(X > 400 && X < 600 && Y > 800 && Y < 900){
+	    	            execute = true;
+	    	            frameoverworld.setVisible(false);
+	    	            startmap("Map1.txt");
+	    			 }else if(X > 100 && X < 200 && Y > 800 && Y < 900){
+	    				 startMutliplayer("vs1.txt");
+	    			 }
+
+	    	  }
+   }
    
    /**
     * Rewrite this method for your game
     */
    protected void update(int deltaTime){
-      if(turn == "enemy"){
+      if(turn.turn == "enemy"){
     	  AIUnit unit = enemy;
     	  while(unit != null){
     		  aiselected = unit;
@@ -386,10 +313,10 @@ public class Game implements Runnable{
     		  aiselected = null;
     		  aisearchrange = null;
     	  }
-    	  turn = "player";
+    	  turn = turn.next;
     	  action = "";
       }
-      if(esc == true && turn == "player"){
+      if(esc == true && turn.turn == "player"){
     	  if(action == "selected"){
     		  selected = null;
     		  moverange = null;
@@ -402,11 +329,8 @@ public class Game implements Runnable{
     		  action = "confirm";
     	  }
       }
-      if(execute == false && click == true && turn == "player"){
-	  //if(action != "execute" && click == true){
+      if(execute == false && click == true && turn.turn == "player"){
     	  execute = true;
-		  //action = "execute";
-	      //if(selected == true && confirm == false){
 	      Unit unit = player;
 	      while(unit != null){
 	    	  if(X/gridSize == unit.x && Y/gridSize == unit.y){
@@ -509,10 +433,8 @@ public class Game implements Runnable{
 			       writer.println("1");
 				   writer.close();
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -522,6 +444,17 @@ public class Game implements Runnable{
       if(esc == true){
          esc = false;
       }
+   }
+   
+   protected void renderoverworld(Graphics2D g){
+		  g.setColor(Color.blue);
+	      g.fillRect(400, 800, 200, 100);
+		  g.setColor(Color.white);
+	      g.fillRect(405, 805, 190, 90);
+	      g.setColor(Color.yellow);
+	      g.fillRect(100, 800, 100, 100);
+		  g.setColor(Color.white);
+	      g.fillRect(105, 805, 90, 90);
    }
    
    /**
@@ -609,10 +542,9 @@ public class Game implements Runnable{
           g.drawString("Move", (selected.x+1)*gridSize+15, (int)((selected.y+.5)*gridSize-(-10+15*items/2-15*menu.next.i)));
           g.drawString("Cancel", (selected.x+1)*gridSize+15, (int)((selected.y+.5)*gridSize-(-10+15*items/2-15*menu.next.next.i)));
       }
-      if(click == false && turn == "player"){
+      if(click == false && turn.turn == "player"){
     	  if(action == "target"){
 			  AIUnit loop = enemy;
-			  AIUnit saftey = null;
 			  while(loop != null){
 				  if(x/gridSize == loop.x && y/gridSize == loop.y){
 					  int combat = 3;
@@ -634,7 +566,6 @@ public class Game implements Runnable{
 			          g.drawString(Double.toString(selected.accuracy), (loop.x+1)*gridSize+90, (int)((loop.y+.5)*gridSize-(-10+15*combat/2-15*combatmenu.next.next.i)));
 			          break;
 			      }
-				  saftey = loop;
 				  loop = loop.next;
 			  }
     	  }
@@ -661,7 +592,7 @@ public class Game implements Runnable{
 			   check = check.next;
 		   }
 		   action = "notyourturn";
-		   turn = "enemy";
+		   turn = turn.next;
 	   }
    }
    
@@ -1036,10 +967,166 @@ public class Game implements Runnable{
        }
    }
    
-   public static boolean main(String [] args){
-      Game ex = new Game("Map1.txt");
+   private void startmap(String map){
+	      File file = new File(map);
+	      Scanner input = null;
+	  	  String line = null;
+	      try {
+	    	  input = new Scanner(file);
+		  } catch (FileNotFoundException e) {
+			  e.printStackTrace();
+		  }
+	  	  int linecount = 0;
+	  	  while( input.hasNextLine() ){
+	   		  line = input.nextLine();
+	   		  linecount++;
+	   	  }
+	      try {
+	    	  input = new Scanner(file);
+		  } catch (FileNotFoundException e) {
+			  e.printStackTrace();
+		  }
+	  	  String[] part;
+	  	  for(int i = 0; i < linecount; i++){
+	  		  part = new String[3];
+	  	 	  line = input.nextLine();
+	  	 	  part = line.split(" ");
+	  	 	  for(int j = 0; j < part.length; j++){
+	  	 		  if(i == 0){
+	  	 			  if(j == 0){
+	  	 				  mapSizex = Integer.parseInt(part[j]);
+	  	 			  }else{
+	  	 				  mapSizey = Integer.parseInt(part[j]);
+	  	 			  }
+	  	 		  }else{
+	  	 			  if(part[j].compareTo("x") == 0){
+	                      if(obstacle == null){
+	                    	  obstacle = new Obstacle(j, i-1);
+	                      }else{
+	                    	  Obstacle read = obstacle;
+	                          while(read.next != null){
+	                        	  read = read.next;
+	                          }
+	                          read.next = new Obstacle(j, i-1);
+	                      }
+	  	 			  }else if(part[j].compareTo("E") == 0){
+	  	 				  if(enemy == null){
+	  	 					  enemy = new AIUnit(j, i-1, 10, 5, .60, 4, 10);
+	  	 				  }else{
+	  	 					  AIUnit read = enemy;
+	  	 					  while(read.next != null){
+	  	 						  read = read.next;
+	  	 					  }
+	  	 					  read.next = new AIUnit(j, i-1, 10, 5, .60, 4, 10);
+	  	 				  }
+	  	 			  }else if(part[j].compareTo("P") == 0){
+	  	 				  if(player == null){
+	  	 					player = new Unit(j, i-1, 20, 8, .8, 5);
+	  	 				  }else{
+	  	 					  Unit read = player;
+	  	 					  while(read.next != null){
+	  	 						  read = read.next;
+	  	 					  }
+	  	 					  read.next = new Unit(j, i-1, 20, 8, .8, 5);
+	  	 				  }
+	  	 			  }
+	  	 		  }
+	  	 	  }
+	  	  }
+	  	  if(map == "Map1.txt"){
+	  		  turn = new Turn ("player");
+	  		  turn.next = new Turn ("enemy");
+	  		  turn.next.next = turn;
+	  	  }else if(map == "vs1.txt"){
+	  		  turn = new Turn ("player");
+	  		  turn.next = new Turn ("player2");
+	  		  turn.next.next = turn;
+	  	  }
+	  	  
+	  	  overworld = false;
+	      frame = new JFrame("Basic Game");
+	      
+	      JPanel panel = (JPanel) frame.getContentPane();
+	      panel.setPreferredSize(new Dimension(mapSizex*gridSize, mapSizey*gridSize));
+	      panel.setLayout(null);
+	      
+	      canvas = new Canvas();
+	      canvas.setBounds(0, 0, mapSizex*gridSize+1, mapSizey*gridSize+1);
+	      canvas.setIgnoreRepaint(true);
+	      
+	      panel.add(canvas);
+	      
+	      canvas.addMouseListener(new MouseControl());
+	      canvas.addMouseMotionListener(new MyClass());
+	      canvas.addKeyListener(new KeyControl());
+	      
+	      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	      frame.pack();
+	      frame.setResizable(false);
+	      frame.setVisible(true);
+	      frame.toFront();
+	      
+	      canvas.createBufferStrategy(2);
+	      bufferStrategy = canvas.getBufferStrategy();
+	      
+	      canvas.requestFocus();
+   }
+   
+   private void startMutliplayer(String map){
+	   startmap(map);
+   }
+   
+   
+private class MouseControl extends MouseAdapter{
+ public void mousePressed(MouseEvent event){
+	  if(click == false && SwingUtilities.isLeftMouseButton(event)){
+		  X = event.getX();
+		  Y = event.getY();
+	      click = true;
+	  }
+	  if(SwingUtilities.isRightMouseButton(event)){
+		  esc = true;
+	  }
+
+ }
+ public void mouseReleased(MouseEvent event){
+	  click = false;
+	  execute = false;
+ }
+}
+
+public class MyClass implements MouseMotionListener {
+
+   public void mouseMoved(MouseEvent e) {
+      x = e.getX();
+      y = e.getY();
+   }
+
+   public void mouseDragged(MouseEvent e) {
+   }
+}
+@SuppressWarnings("serial")
+public class KeyControl extends JFrame implements KeyListener {
+   public void keyPressed(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_ESCAPE && esc == false) {
+         esc = true;
+      }
+   }
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+
+	}
+}
+   
+   public static void main(String [] args){
+      Game ex = new Game();
       new Thread(ex).start();
-	return true;
    }
 
 }
