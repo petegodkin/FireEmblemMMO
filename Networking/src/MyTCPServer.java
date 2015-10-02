@@ -6,7 +6,7 @@ class MyTCPServer {
 	public static void main(String argv[]) throws Exception {
 		String clientSentence;
 		String capitalizedSentence;
-		ServerSocket welcomeSocket = new ServerSocket(0);
+		ServerSocket welcomeSocket = new ServerSocket(33333);
 		System.out.println("Server using port number " + welcomeSocket.getLocalPort());
 		System.out.println("Server address " + welcomeSocket.getInetAddress());
 		
