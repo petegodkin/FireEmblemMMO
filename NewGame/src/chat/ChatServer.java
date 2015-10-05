@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import chat.Message.MessageType;
+
 class ChatServer {
 	public static final int PORT_NUMBER = 33333;
 	private static List<ClientThread> clients = new Vector<>();
@@ -23,7 +25,7 @@ class ChatServer {
 		}
 	}
 
-	public static void broadcastMessage(Message message) throws IOException {
+	public static void broadcastMessage(Message message) {
 		System.out.println("Broadcasting: " + message.body);
 		Iterator<ClientThread> it = clients.iterator();
 		while (it.hasNext()) {
@@ -34,6 +36,7 @@ class ChatServer {
 				} catch (IOException exc) {
 					System.out.println("Failed to send message to " + client.getUsername()
 						+ ". Disconnecting...");
+					ChatServer.broadcastMessage(new Message(MessageType.LOGOUT, client.getUsername(), ""));
 					client.close();
 					it.remove();
 				}
@@ -42,10 +45,8 @@ class ChatServer {
 	}
 
 	public static void logout(ClientThread user) {
-		try {
-			clients.remove(user);
-			user.close();
-		} catch (IOException exc) {
-		}
+		clients.remove(user);
+		user.close();
+		System.out.println(user.getUsername() + " disconnected");
 	}
 }

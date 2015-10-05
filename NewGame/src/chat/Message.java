@@ -9,7 +9,8 @@ public class Message implements Serializable {
 	public enum MessageType {
 		MESSAGE,
 		LOGOUT,
-		DISCONNECT; //not used currently
+		LOGIN,
+		DISCONNECT;
 	}
 	
 	MessageType type;

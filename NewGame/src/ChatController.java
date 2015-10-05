@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class ChatController {
 
@@ -23,6 +25,18 @@ public class ChatController {
 
     @FXML
     protected void handleSendButtonAction(ActionEvent event) {
+    	sendMessage();
+    }
+    
+    @FXML
+    protected void handleInputKeyPressed(KeyEvent event) {
+    	if (event.getCode() == KeyCode.ENTER) {
+    		event.consume();
+    		sendMessage();
+    	}
+    }
+    
+    private void sendMessage() {
     	String message = messageTextArea.getText();
     	try {
     		chatClient.sendMessage(message);

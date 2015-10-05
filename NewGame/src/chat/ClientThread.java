@@ -31,6 +31,7 @@ public class ClientThread extends Thread {
 		try {
 			username = (String)input.readObject();
 			System.out.println(username + " connected");
+			ChatServer.broadcastMessage(new Message(MessageType.LOGIN, username, ""));
 		} catch (Exception exc) {
 			System.out.println("Not a good way to do this...");
 			return;
@@ -46,18 +47,22 @@ public class ClientThread extends Thread {
 					ChatServer.broadcastMessage(message);
 				}
 			} catch (Exception exc) {
-				System.out.println("Not a good way to do this...");
 				break;
 			}
 
 
 		}
+		ChatServer.broadcastMessage(new Message(MessageType.LOGOUT, username, ""));
 		ChatServer.logout(this);
 	}
 
-	public void close() throws IOException {
-		interrupt();
-		socket.close();
+	public void close() {
+		try {
+			interrupt();
+			socket.close();
+		} catch (IOException ioExc) {
+			ioExc.printStackTrace();
+		}
 	}
 
 	public String getUsername() {
