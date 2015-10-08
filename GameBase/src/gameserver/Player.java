@@ -3,9 +3,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import gameclient.ClientMessage;
 import gamemodel.GameAction;
 import gamemodel.GameModel;
-import gamemodel.ServerMessage;
 import gamemodel.WinCondition;
 
 public class Player {	
@@ -35,8 +35,9 @@ public class Player {
 		}
 	}
 
-	public GameAction getNextAction() throws ClassNotFoundException, IOException {
-		return (GameAction)input.readObject();
+	//blocks until a message is received
+	public ClientMessage getNextClientMessage() throws ClassNotFoundException, IOException {
+		return (ClientMessage)input.readObject();
 	}
 
 	public String getName() {

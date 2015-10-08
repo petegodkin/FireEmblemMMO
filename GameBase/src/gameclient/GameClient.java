@@ -5,8 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import gamemodel.Board;
-import gamemodel.GameAction;
-import gamemodel.ServerMessage;
+import gameserver.ServerMessage;
 
 public class GameClient {
 	private Board board;
@@ -21,14 +20,14 @@ public class GameClient {
 		this.output = output;
 	}
 	
-	public ServerMessage makeMove(GameAction action) throws ClassNotFoundException, IOException {
-		sendAction(action);
+	public ServerMessage makeMove(ClientMessage msg) throws ClassNotFoundException, IOException {
+		sendAction(msg);
 		return receiveMessage();
 	}
 	
-	private void sendAction(GameAction action) {
+	private void sendAction(ClientMessage msg) {
 		try {
-			output.writeObject(action);
+			output.writeObject(msg);
 		} catch (IOException e) {
 			System.err.println("Failed to send server an action!");
 			e.printStackTrace();

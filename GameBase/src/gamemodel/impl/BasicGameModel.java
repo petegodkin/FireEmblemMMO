@@ -2,15 +2,19 @@ package gamemodel.impl;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.lang.reflect.Constructor;
 
-import gamemodel.EndTurnAction;
+import gameclient.ClientMessage;
+import gameclient.ClientMessageType;
+import gamemodel.Board;
 import gamemodel.GameAction;
 import gamemodel.GameModel;
-import gamemodel.ServerMessage;
-import gamemodel.ServerMessageType;
 import gameserver.Player;
+import gameserver.ServerMessage;
+import gameserver.ServerMessageType;
 
 public class BasicGameModel extends GameModel {
 	public BasicGameModel() {
@@ -33,10 +37,11 @@ public class BasicGameModel extends GameModel {
 		
 		while (true) {
 			try {
-				GameAction action = p.getNextAction();
-				if (action instanceof EndTurnAction) {
+				ClientMessage clientMsg = p.getNextClientMessage();
+				if (clientMsg.type == ClientMessageType.END_TURN) {
 					break;
-				} else {
+				} else { //type GameAction
+					GameAction action = createAction(clientMsg);
 					if(board.handleAction(action)) {
 						p.send(new ServerMessage(ServerMessageType.VALID_MOVE));
 					} else {
@@ -44,10 +49,10 @@ public class BasicGameModel extends GameModel {
 					}
 				} 
 			} catch (ClassNotFoundException | IOException e) {
-				// TODO: notify player their move was invalid
 				// This shouldn't really have to happen unless the client is messed with
 				// to make invalid requests. If that's the case there are plenty of other
 				// security flaws we need to worry about.
+				p.send(new ServerMessage(ServerMessageType.INVALID_MOVE));
 				e.printStackTrace();
 			}
 			if (isGameover()) {
@@ -64,6 +69,24 @@ public class BasicGameModel extends GameModel {
 			} else {
 				p.send(new ServerMessage(ServerMessageType.YOU_LOSE));
 			}
+		}
+	}
+	
+	private GameAction createAction(ClientMessage msg) {
+		try {
+			Object data[] = msg.data;
+			Constructor<? extends GameAction> constructor = (Constructor<? extends GameAction>)data[0];
+			return constructor.newInstance(Arrays.copyOfRange(data, 1, data.length));
+		} catch (Exception exc) {
+			System.err.println("Unable to instantiate game action");
+			exc.printStackTrace();
+			// TODO: This isn't a great way to do this but returning null seems worse
+			return new GameAction() {
+				@Override
+				public boolean isValid(Board b) {return false;}
+				@Override
+				public void doAction(Board b) {}
+			};
 		}
 	}
 }

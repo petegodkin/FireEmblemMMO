@@ -1,4 +1,4 @@
-package gamemodel;
+package gameserver;
 
 public enum ServerMessageType {
 	START_TURN,

@@ -1,4 +1,5 @@
-package gamemodel;
+package gameserver;
+
 
 public class ServerMessage {
 	public ServerMessageType type;
