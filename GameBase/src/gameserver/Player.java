@@ -8,11 +8,13 @@ import gamemodel.GameAction;
 import gamemodel.GameModel;
 import gamemodel.WinCondition;
 
+
 public class Player {	
 	private String name;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	private WinCondition winCondition;
+	//maybe should have a lose condition as well if more than 1vs1
 	
 	public Player(String name, ObjectInputStream input, ObjectOutputStream output, 
 			WinCondition winCondition) {

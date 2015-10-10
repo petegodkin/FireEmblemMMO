@@ -13,7 +13,7 @@ import javafx.scene.control.TextArea;
 
 /**
  * A simple 2 player server
- *
+ * TODO: change this to handle number of players depending on the game and lots more
  */
 public class GameServer extends Thread {
 	private static final int PORT_NUMBER = 33334;
@@ -51,7 +51,7 @@ public class GameServer extends Thread {
 			Player p2 = new Player("Player2", input, output, cond);
 			
 			game.addPlayers(p1, p2);
-			
+			textArea.appendText("Starting game...\n");
 			game.start();
 		} catch (IOException exc) {
 			textArea.appendText("Setup error: game failed to start\n");
