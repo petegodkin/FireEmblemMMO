@@ -1,16 +1,14 @@
 package gameclient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import gamemodel.Board;
 import gamemodel.GameCharacter;
 
 public class GameView {
-	Board board;
-	List<GameCharacter> characters;
-	String playerName;
+	private Board board;
+	private List<GameCharacter> characters;
+	private String playerName;
 	
 	public GameView(String playerName, Board board) {
 		this.playerName = playerName;
@@ -20,5 +18,13 @@ public class GameView {
 	
 	public List<GameCharacter> getCharacters() {
 		return characters;
+	}
+	
+	public Board getBoard() {
+		return board;
+	}
+	
+	public String getPlayerName() {
+		return playerName;
 	}
 }

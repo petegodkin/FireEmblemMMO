@@ -1,5 +1,8 @@
 package gamemodel;
 
-public class GameObject implements Piece {
+/**
+ * The idea is that things like chests, doors, and breakable walls would extend this
+ */
+public abstract class GameObject implements Piece {
 
 }
