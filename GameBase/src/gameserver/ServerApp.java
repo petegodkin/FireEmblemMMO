@@ -11,14 +11,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * This class will setup all the connections with GameClients and kickoff the game
+ */
 public class ServerApp extends Application {
 	
 	private Stage primaryStage;
     private BorderPane rootLayout;
     
-	/**
-	 * This class will setup all the connections with GameClients and kickoff the game
-	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -29,8 +29,8 @@ public class ServerApp extends Application {
         this.primaryStage.setTitle("FireEmblemMMO");
 		initRootLayout();
 		TextArea textArea = loadSetUpPane();
-		GameServer server = new GameServer();
-		server.start(textArea);
+		GameServer server = new GameServer(textArea);
+		server.start();
 	}
 	
     public void initRootLayout() {
