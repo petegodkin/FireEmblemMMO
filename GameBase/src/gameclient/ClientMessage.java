@@ -8,7 +8,8 @@ public class ClientMessage implements Serializable {
 	public ClientMessageType type;
 	/**
 	 * Used to pass GameAction
-	 * first Object should be Constructor you want to use to instantiate the action
+	 * first Object should be the class you want to instantiate
+	 * the class should only have one constructor
 	 * rest should be arguments for the constructor
 	 */
 	public Object data[];

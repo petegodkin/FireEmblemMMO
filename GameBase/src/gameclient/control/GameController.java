@@ -30,10 +30,6 @@ public class GameController {
 		double w = mainCanvas.getWidth();
 		double h = mainCanvas.getHeight();
 		
-		
-		//x += w / 2.0;
-		//y += h / 2.0;
-		
 		Point p = new Point((int)(x / w * board.numCols()), (int)(y / h * board.numRows()));
 		System.out.println("Clieck tile at x: " + p.x + " y: " + p.y);
 		Tile t = board.getTile(p.x, p.y);
