@@ -21,6 +21,16 @@ public class Tile {
 		return piece;
 	}
 	
+	public Piece removePiece() {
+		Piece result = piece;
+		piece = null;
+		return result;
+	}
+	
+	public void placePiece(Piece p) {
+		piece = p;
+	}
+	
 	public boolean isTraversable() {
 		return traversable;
 	}

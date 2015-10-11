@@ -16,6 +16,7 @@ import javafx.stage.Stage;
  */
 public class ServerApp extends Application {
 	
+	private GameServer server;
 	private Stage primaryStage;
     private BorderPane rootLayout;
     
@@ -29,8 +30,18 @@ public class ServerApp extends Application {
         this.primaryStage.setTitle("FireEmblemMMO");
 		initRootLayout();
 		TextArea textArea = loadSetUpPane();
-		GameServer server = new GameServer(textArea);
+		server = new GameServer(textArea);
 		server.start();
+	}
+	
+	@Override
+	public void stop() {
+		try {
+			server.shutdown();
+		} catch (IOException e) {
+			System.err.println("Failed to shutdown server");
+			e.printStackTrace();
+		}
 	}
 	
     public void initRootLayout() {

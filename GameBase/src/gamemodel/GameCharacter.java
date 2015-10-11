@@ -4,14 +4,14 @@ import java.util.List;
 
 /**
  * All characters should extend this class
- * Or maybe this shouldn't be abstract... idk
+ * Not sure if this should be abstract or not
  */
-public abstract class GameCharacter implements Piece {
+public class GameCharacter implements Piece {
 	private String ownerName;
 	protected CharacterStats stats;
-	protected List<CharacterAction> actions;
+	protected List<ActionType> actions;
 	
-	public GameCharacter(String ownerName, CharacterStats stats, List<CharacterAction> actions) {
+	public GameCharacter(String ownerName, CharacterStats stats, List<ActionType> actions) {
 		this.ownerName = ownerName;
 		this.stats = stats;
 		this.actions = actions;
@@ -21,7 +21,7 @@ public abstract class GameCharacter implements Piece {
 		return ownerName;
 	}
 	
-	public List<CharacterAction> getActions() {
+	public List<ActionType> getActions() {
 		return actions;
 	}
 }

@@ -11,7 +11,7 @@ public class CharacterStats {
 	
 	public int attack;
 	public int defense;
-	public int hp;
+	private int hp;
 	
 	public CharacterStats(int h, int a, int d) {
 		baseHp = h;
@@ -23,7 +23,7 @@ public class CharacterStats {
 		defense = baseDefense;
 	}
 
-	public void damage(int damage) {
+	public void takeDamage(int damage) {
 		hp = Math.max(0, hp - damage);
 	}
 	

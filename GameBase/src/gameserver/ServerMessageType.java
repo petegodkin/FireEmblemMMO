@@ -5,5 +5,7 @@ public enum ServerMessageType {
 	YOU_WIN,
 	YOU_LOSE,
 	VALID_MOVE,
-	INVALID_MOVE;
+	INVALID_MOVE,
+	UPDATE_BOARD,
+	START_GAME;
 }
