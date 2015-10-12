@@ -15,11 +15,13 @@ public class GameView {
 	private List<GameCharacter> characters;
 	private String playerName;
 	public Point selected;
+	public Point cursor;
 	
 	public GameView(String playerName, Board board) {
 		this.playerName = playerName;
 		this.board = board;
 		characters = board.getCharactersForPlayer(playerName);
+		cursor = new Point(0,0);
 	}
 	
 	public List<GameCharacter> getCharacters() {

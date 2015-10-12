@@ -7,6 +7,6 @@
 
 <AnchorPane prefHeight="900.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameclient.control.GameController">
    <children>
-      <Canvas fx:id="mainCanvas" height="880.0" layoutX="217.0" layoutY="170.0" onKeyPressed="#handleKeyPress" onMouseClicked="#handleClick" width="580.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+      <Canvas fx:id="mainCanvas" focusTraversable="true" height="880.0" layoutX="217.0" layoutY="170.0" onKeyPressed="#handleKeyPress" onKeyReleased="#handleKeyRelease" onMouseClicked="#handleClick" onMouseMoved="#handleMouseMove" width="580.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>

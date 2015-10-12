@@ -29,6 +29,7 @@ public class GameDisplay {
 		this.canvas = canvas;
 	}
 
+	//TODO: should take in a deltaTime later or calculate it
 	public void update() {
 		double height = canvas.getHeight();
 		double width = canvas.getWidth();
@@ -38,15 +39,19 @@ public class GameDisplay {
 		
 		double cellWidth = width / numCols;
 		double cellHeight = height / numRows;
-		
+			
 		GraphicsContext graphics = canvas.getGraphicsContext2D();
 		graphics.clearRect(0, 0, width, height);
 		
 		Tile tiles[][] = board.getTiles();
+		
+		double cellX;
+		double cellY;
+		
 		for (int x = 0; x < numCols; x++) {
 			for (int y = 0; y < numRows; y++) {
-				double cellX = cellWidth * x;
-				double cellY = cellHeight * y;
+				cellX = cellWidth * x;
+				cellY = cellHeight * y;
 				Tile t = tiles[x][y];
 				//draw green rectangle for background
 				graphics.setFill(Color.GREEN);
@@ -69,10 +74,16 @@ public class GameDisplay {
 				}
 			}
 		}
+		
+		graphics.setFill(new Color(1.0, 1.0, 0.0, 0.5));
+		cellX = cellWidth * gameView.cursor.x;
+		cellY = cellHeight * gameView.cursor.y;
+		graphics.fillRect(cellX, cellY, cellWidth, cellHeight);
+		
 		if (gameView.selected != null) {
-			graphics.setFill(Color.AZURE);
-			double cellX = cellWidth * gameView.selected.x;
-			double cellY = cellHeight * gameView.selected.y;
+			graphics.setFill(new Color(0.0, 0.0, 1.0, 0.75));
+			cellX = cellWidth * gameView.selected.x;
+			cellY = cellHeight * gameView.selected.y;
 			graphics.fillRect(cellX, cellY, cellWidth, cellHeight);
 		}
 	}

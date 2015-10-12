@@ -1,5 +1,6 @@
 package gamemodel;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -70,6 +71,10 @@ public class Board {
 	
 	public Tile getTile(int x, int y) {
 		return tiles[x][y];
+	}
+	
+	public Tile getTile(Point p) {
+		return tiles[p.x][p.y];
 	}
 	
 	// Not really meant to be called over and over
