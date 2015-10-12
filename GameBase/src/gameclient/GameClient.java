@@ -21,9 +21,24 @@ public class GameClient implements Runnable {
 	private ObjectOutputStream output;
 	private Socket socket;
 	private boolean gameover;
+	private boolean myTurn;
 	
 	public GameClient() {
 		gameDisplay = new GameDisplay();
+	}
+	
+	public void connect(String username, String hostname, int portNumber) throws IOException {
+		socket = new Socket(hostname, portNumber);
+		output = new ObjectOutputStream(socket.getOutputStream());
+		input  = new ObjectInputStream(socket.getInputStream());
+		output.writeObject(username);
+		this.username = username;
+		gameover = false;
+		myTurn = false;
+	}
+	
+	public void disconect() throws IOException {
+		socket.close();
 	}
 	
 	@Override
@@ -71,19 +86,6 @@ public class GameClient implements Runnable {
 		}
 	}
 	
-	public void connect(String username, String hostname, int portNumber) throws IOException {
-		socket = new Socket(hostname, portNumber);
-		output = new ObjectOutputStream(socket.getOutputStream());
-		input  = new ObjectInputStream(socket.getInputStream());
-		output.writeObject(username);
-		this.username = username;
-		gameover = false;
-	}
-	
-	public void disconect() throws IOException {
-		socket.close();
-	}
-	
 	public void sendMessage(ClientMessage msg) {
 		try {
 			output.writeObject(msg);
@@ -115,6 +117,7 @@ public class GameClient implements Runnable {
 	}
 	
 	public void takeTurn() throws ClassNotFoundException, IOException {
+		myTurn = true;
 		gameDisplay.startTurn();
 		ServerMessage msg;
 		boolean myTurn = true;
@@ -139,5 +142,10 @@ public class GameClient implements Runnable {
 		}
 		
 		gameDisplay.endTurn();
+		myTurn = false;
+	}
+	
+	public boolean isMyTurn() {
+		return myTurn;
 	}
 }
