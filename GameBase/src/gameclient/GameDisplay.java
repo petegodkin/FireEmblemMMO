@@ -1,5 +1,7 @@
 package gameclient;
 
+import java.awt.Point;
+
 import gamemodel.Board;
 import gamemodel.GameCharacter;
 import gamemodel.Tile;
@@ -80,11 +82,41 @@ public class GameDisplay {
 		cellY = cellHeight * gameView.cursor.y;
 		graphics.fillRect(cellX, cellY, cellWidth, cellHeight);
 		
-		if (gameView.selected != null) {
+		ViewState state = gameView.getState();
+		if (state == ViewState.MOVING) {
 			graphics.setFill(new Color(0.0, 0.0, 1.0, 0.75));
-			cellX = cellWidth * gameView.selected.x;
-			cellY = cellHeight * gameView.selected.y;
+			cellX = cellWidth * gameView.getSelected().x;
+			cellY = cellHeight * gameView.getSelected().y;
 			graphics.fillRect(cellX, cellY, cellWidth, cellHeight);
+		} else if (state == ViewState.CHARACTER_MENU) {
+			displayCharacterMenu(graphics);
+		} else if (state == ViewState.TARGETING) {
+			
+		}
+	}
+	
+	private void displayCharacterMenu(GraphicsContext g) {
+		double height = canvas.getHeight();
+		double width = canvas.getWidth();
+		Board board = gameView.getBoard();
+		int numCols = board.numCols();
+		int numRows = board.numRows();
+		
+		double cellWidth = width / numCols;
+		double cellHeight = height / numRows;
+		int items = 3;
+		
+		Point dest = gameView.getDestination();
+		Tile t = board.getTile(dest);
+		if (t.hasCharacter()) {
+			g.setFill(Color.GRAY);
+			g.fillRect((dest.x+1)*cellWidth+10, (int)((dest.y+.5)*cellHeight-(10+15*items)/2), 100, 10+15*items);
+			g.setFill(Color.WHITE);
+			g.fillRect((dest.x+1)*cellWidth+10+1, (int)((dest.y+.5)*cellHeight-(10+15*items)/2)+1, 100-2, 10+15*items-2);
+			g.setFill(Color.GRAY);
+			g.fillText("Attack", (dest.x+1)*cellWidth+15, (int)((dest.y+.5)*cellHeight-(-10+15*items/2-15*0)));
+			g.fillText("Move", (dest.x+1)*cellWidth+15, (int)((dest.y+.5)*cellHeight-(-10+15*items/2-15*1)));
+			g.fillText("Cancel", (dest.x+1)*cellWidth+15, (int)((dest.y+.5)*cellHeight-(-10+15*items/2-15*2)));
 		}
 	}
 	

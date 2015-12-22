@@ -7,6 +7,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import gamemodel.Board;
 
 import gameserver.ServerMessage;
@@ -21,7 +23,6 @@ public class GameClient implements Runnable {
 	private ObjectOutputStream output;
 	private Socket socket;
 	private boolean gameover;
-	private boolean myTurn;
 	
 	public GameClient() {
 		gameDisplay = new GameDisplay();
@@ -34,7 +35,6 @@ public class GameClient implements Runnable {
 		output.writeObject(username);
 		this.username = username;
 		gameover = false;
-		myTurn = false;
 	}
 	
 	public void disconect() throws IOException {
@@ -95,7 +95,7 @@ public class GameClient implements Runnable {
 		}
 	}
 	
-	public void sendAction(Object data[]) {
+	public void sendAction(Object... data) {
 		ClientMessage msg = new ClientMessage(ClientMessageType.GAME_ACTION, data);
 		sendMessage(msg);
 	}
@@ -117,7 +117,7 @@ public class GameClient implements Runnable {
 	}
 	
 	public void takeTurn() throws ClassNotFoundException, IOException {
-		myTurn = true;
+		gameView.startTurn();
 		gameDisplay.startTurn();
 		ServerMessage msg;
 		boolean myTurn = true;
@@ -146,6 +146,6 @@ public class GameClient implements Runnable {
 	}
 	
 	public boolean isMyTurn() {
-		return myTurn;
+		return !gameover && gameView.getState() != ViewState.OTHER_TURN;
 	}
 }

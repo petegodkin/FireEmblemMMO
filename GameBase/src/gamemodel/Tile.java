@@ -13,6 +13,10 @@ public class Tile {
 		return piece instanceof GameCharacter;
 	}
 	
+	public boolean hasCharacter(String playerName) {
+		return hasCharacter() && ((GameCharacter) piece).getOwnerName().equals(playerName);
+	}
+	
 	public GameCharacter getCharacter() {
 		return (GameCharacter)piece;
 	}

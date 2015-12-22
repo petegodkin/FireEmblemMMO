@@ -1,6 +1,7 @@
 package gameclient.control;
 
 import java.awt.Point;
+import java.util.UUID;
 
 import gameclient.GameClient;
 import gameclient.GameView;
@@ -57,20 +58,7 @@ public class GameController {
 	}
 	
 	private void select() {
-		if (client.isMyTurn()) {
-			GameView view = client.getGameView();
-			Board board = view.getBoard();
-			
-			Tile t = board.getTile(view.cursor);
-			if (t.hasCharacter() && t.getCharacter().getOwnerName().equals(view.getPlayerName())) {
-				view.selected = new Point(view.cursor);
-			} else if (view.selected != null && !t.hasPiece() && t.isTraversable()) {
-				doMoveAction(view.cursor.x, view.cursor.y);
-				view.selected = null;
-			} else {
-				view.selected = null;
-			}
-		}
+			client.getGameView().select();
 	}
 	
 	private void cursorUp() {
@@ -93,20 +81,6 @@ public class GameController {
 		Board b = client.getGameView().getBoard();
 		if (client.getGameView().cursor.x < b.numCols() - 1) {
 			client.getGameView().cursor.x++;
-		}
-	}
-	
-	private void doMoveAction(int x, int y) {
-		GameView view = client.getGameView();
-		MoveAction action = new MoveAction(view.selected.x, view.selected.y, x, y);
-		if (view.getBoard().handleAction(action)) {		
-			Object data[] = new Object[5];
-			data[0] = MoveAction.class;
-			data[1] = view.selected.x;
-			data[2] = view.selected.y;
-			data[3] = x;
-			data[4] = y;
-			client.sendAction(data);
 		}
 	}
 	

@@ -9,8 +9,8 @@ public class CharacterStats {
 	private int baseDefense;
 	private int baseHp;
 	
-	public int attack;
-	public int defense;
+	private int attack;
+	private int defense;
 	private int hp;
 	
 	public CharacterStats(int h, int a, int d) {

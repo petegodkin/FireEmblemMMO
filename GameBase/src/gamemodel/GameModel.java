@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import gameclient.ClientMessage;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import gameserver.Player;
@@ -57,7 +55,7 @@ public abstract class GameModel {
 		} catch (Exception exc) {
 			System.err.println("Unable to instantiate game action");
 			exc.printStackTrace();
-			// TODO: This isn't a great way to do this but returning null seems worse
+			// TODO: This isn't a great way to do this
 			return new GameAction() {
 				@Override
 				public boolean isValid(Board b) {return false;}
